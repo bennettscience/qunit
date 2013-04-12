@@ -1,18 +1,19 @@
-QUnit.extend( QUnit, {
+QUnit.extend( QUnit.assert, {
 
 	/**
 	 * Check the sequence/order
 	 *
-	 * @example step(1); setTimeout(function () { step(3); }, 100); step(2);
-	 * @param Number expected  The excepted step within the test()
+	 * @example test('Example unit test', function(assert) { assert.step(1); setTimeout(function () { assert.step(3); start(); }, 100); assert.step(2); stop(); });
+	 * @param Number expected The excepted step within the test()
 	 * @param String message (optional)
 	 */
 	step: function (expected, message) {
-		this.config.current.step++; // increment internal step counter.
+		// increment internal step counter.
+		QUnit.config.current.step++;
 		if (typeof message === "undefined") {
 			message = "step " + expected;
 		}
-		var actual = this.config.current.step;
+		var actual = QUnit.config.current.step;
 		QUnit.push(QUnit.equiv(actual, expected), actual, expected, message);
 	}
 });
@@ -21,5 +22,5 @@ QUnit.extend( QUnit, {
  * Reset the step counter for every test()
  */
 QUnit.testStart(function () {
-	this.config.current.step = 0;
+	QUnit.config.current.step = 0;
 });

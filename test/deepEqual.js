@@ -70,38 +70,43 @@ test("Primitive types and constants", function () {
 	equal(QUnit.equiv('', null), false, "string");
 	equal(QUnit.equiv('', undefined), false, "string");
 
-	// Short annotation VS new annotation
-	equal(QUnit.equiv(0, new Number()), true, "short annotation VS new annotation");
-	equal(QUnit.equiv(new Number(), 0), true, "short annotation VS new annotation");
-	equal(QUnit.equiv(1, new Number(1)), true, "short annotation VS new annotation");
-	equal(QUnit.equiv(new Number(1), 1), true, "short annotation VS new annotation");
-	equal(QUnit.equiv(new Number(0), 1), false, "short annotation VS new annotation");
-	equal(QUnit.equiv(0, new Number(1)), false, "short annotation VS new annotation");
+	// Rename for lint validation.
+	// We know this is bad, we are asserting whether we can coop with bad code like this.
+	var SafeNumber = Number, SafeString = String, SafeBoolean = Boolean, SafeObject = Object;
 
-	equal(QUnit.equiv(new String(), ""), true, "short annotation VS new annotation");
-	equal(QUnit.equiv("", new String()), true, "short annotation VS new annotation");
-	equal(QUnit.equiv(new String("My String"), "My String"), true, "short annotation VS new annotation");
-	equal(QUnit.equiv("My String", new String("My String")), true, "short annotation VS new annotation");
-	equal(QUnit.equiv("Bad String", new String("My String")), false, "short annotation VS new annotation");
-	equal(QUnit.equiv(new String("Bad String"), "My String"), false, "short annotation VS new annotation");
+	// primitives vs. objects
 
-	equal(QUnit.equiv(false, new Boolean()), true, "short annotation VS new annotation");
-	equal(QUnit.equiv(new Boolean(), false), true, "short annotation VS new annotation");
-	equal(QUnit.equiv(true, new Boolean(true)), true, "short annotation VS new annotation");
-	equal(QUnit.equiv(new Boolean(true), true), true, "short annotation VS new annotation");
-	equal(QUnit.equiv(true, new Boolean(1)), true, "short annotation VS new annotation");
-	equal(QUnit.equiv(false, new Boolean(false)), true, "short annotation VS new annotation");
-	equal(QUnit.equiv(new Boolean(false), false), true, "short annotation VS new annotation");
-	equal(QUnit.equiv(false, new Boolean(0)), true, "short annotation VS new annotation");
-	equal(QUnit.equiv(true, new Boolean(false)), false, "short annotation VS new annotation");
-	equal(QUnit.equiv(new Boolean(false), true), false, "short annotation VS new annotation");
+	equal(QUnit.equiv(0, new SafeNumber()), true, "primitives vs. objects");
+	equal(QUnit.equiv(new SafeNumber(), 0), true, "primitives vs. objects");
+	equal(QUnit.equiv(1, new SafeNumber(1)), true, "primitives vs. objects");
+	equal(QUnit.equiv(new SafeNumber(1), 1), true, "primitives vs. objects");
+	equal(QUnit.equiv(new SafeNumber(0), 1), false, "primitives vs. objects");
+	equal(QUnit.equiv(0, new SafeNumber(1)), false, "primitives vs. objects");
 
-	equal(QUnit.equiv(new Object(), {}), true, "short annotation VS new annotation");
-	equal(QUnit.equiv({}, new Object()), true, "short annotation VS new annotation");
-	equal(QUnit.equiv(new Object(), {a:1}), false, "short annotation VS new annotation");
-	equal(QUnit.equiv({a:1}, new Object()), false, "short annotation VS new annotation");
-	equal(QUnit.equiv({a:undefined}, new Object()), false, "short annotation VS new annotation");
-	equal(QUnit.equiv(new Object(), {a:undefined}), false, "short annotation VS new annotation");
+	equal(QUnit.equiv(new SafeString(), ""), true, "primitives vs. objects");
+	equal(QUnit.equiv("", new SafeString()), true, "primitives vs. objects");
+	equal(QUnit.equiv(new SafeString("My String"), "My String"), true, "primitives vs. objects");
+	equal(QUnit.equiv("My String", new SafeString("My String")), true, "primitives vs. objects");
+	equal(QUnit.equiv("Bad String", new SafeString("My String")), false, "primitives vs. objects");
+	equal(QUnit.equiv(new SafeString("Bad String"), "My String"), false, "primitives vs. objects");
+
+	equal(QUnit.equiv(false, new SafeBoolean()), true, "primitives vs. objects");
+	equal(QUnit.equiv(new SafeBoolean(), false), true, "primitives vs. objects");
+	equal(QUnit.equiv(true, new SafeBoolean(true)), true, "primitives vs. objects");
+	equal(QUnit.equiv(new SafeBoolean(true), true), true, "primitives vs. objects");
+	equal(QUnit.equiv(true, new SafeBoolean(1)), true, "primitives vs. objects");
+	equal(QUnit.equiv(false, new SafeBoolean(false)), true, "primitives vs. objects");
+	equal(QUnit.equiv(new SafeBoolean(false), false), true, "primitives vs. objects");
+	equal(QUnit.equiv(false, new SafeBoolean(0)), true, "primitives vs. objects");
+	equal(QUnit.equiv(true, new SafeBoolean(false)), false, "primitives vs. objects");
+	equal(QUnit.equiv(new SafeBoolean(false), true), false, "primitives vs. objects");
+
+	equal(QUnit.equiv(new SafeObject(), {}), true, "object literal vs. instantiation");
+	equal(QUnit.equiv({}, new SafeObject()), true, "object literal vs. instantiation");
+	equal(QUnit.equiv(new SafeObject(), {a:1}), false, "object literal vs. instantiation");
+	equal(QUnit.equiv({a:1}, new SafeObject()), false, "object literal vs. instantiation");
+	equal(QUnit.equiv({a:undefined}, new SafeObject()), false, "object literal vs. instantiation");
+	equal(QUnit.equiv(new SafeObject(), {a:undefined}), false, "object literal vs. instantiation");
 });
 
 test("Objects Basics.", function() {
@@ -332,9 +337,10 @@ test("Functions.", function() {
 	var f1 = function () {};
 
 	// f2 and f3 have the same code, formatted differently
-	var f2 = function () {var i = 0;};
+	var f2 = function () {return 0;};
 	var f3 = function () {
-		var i = 0 // this comment and no semicoma as difference
+		/*jshint asi:true */
+		return 0 // this comment and no semicoma as difference
 	};
 
 	equal(QUnit.equiv(function() {}, function() {}), false, "Anonymous functions"); // exact source code
@@ -851,9 +857,9 @@ test("Complex Objects.", function() {
 				prop: null,
 				foo: [1,2,null,{}, [], [1,2,3]],
 				bar: undefined
-			}, 3, "Hey!", "ÎšÎ¬Î½Îµ Ï€Î¬Î½Ï„Î± Î³Î½Ï‰Ï�Î¯Î¶Î¿Ï…Î¼Îµ Î±Ï‚ Ï„Ï‰Î½, Î¼Î·Ï‡Î±Î½Î®Ï‚ ÎµÏ€Î¹Î´Î¹ÏŒÏ�Î¸Ï‰ÏƒÎ·Ï‚ ÎµÏ€Î¹Î´Î¹Î¿Ï�Î¸ÏŽÏƒÎµÎ¹Ï‚ ÏŽÏ‚ Î¼Î¹Î±. ÎšÎ»Ï€ Î±Ï‚"
+			}, 3, "Hey!", "ÎšÎ¬Î½Îµ Ï€Î¬Î½Ï„Î± Î³Î½Ï‰ÏÎ¯Î¶Î¿Ï…Î¼Îµ Î±Ï‚ Ï„Ï‰Î½, Î¼Î·Ï‡Î±Î½Î®Ï‚ ÎµÏ€Î¹Î´Î¹ÏŒÏÎ¸Ï‰ÏƒÎ·Ï‚ ÎµÏ€Î¹Î´Î¹Î¿ÏÎ¸ÏŽÏƒÎµÎ¹Ï‚ ÏŽÏ‚ Î¼Î¹Î±. ÎšÎ»Ï€ Î±Ï‚"
 		],
-		unicode: "è€� æ±‰è¯­ä¸­å­˜åœ¨ æ¸¯æ¾³å’Œæµ·å¤–çš„å�Žäººåœˆä¸­ è´µå·ž æˆ‘åŽ»äº†ä¹¦åº— çŽ°åœ¨å°šæœ‰äº‰",
+		unicode: "è€ æ±‰è¯ä¸å˜åœ¨ æ¸¯æ¾³å’Œæµ·å¤–çš„åŽäººåœˆä¸ è´µå·ž æˆ‘åŽ»äº†ä¹¦åº— çŽ°åœ¨å°šæœ‰äº‰",
 		b: "b",
 		c: fn1
 	};
@@ -864,9 +870,9 @@ test("Complex Objects.", function() {
 				prop: null,
 				foo: [1,2,null,{}, [], [1,2,3]],
 				bar: undefined
-			}, 3, "Hey!", "ÎšÎ¬Î½Îµ Ï€Î¬Î½Ï„Î± Î³Î½Ï‰Ï�Î¯Î¶Î¿Ï…Î¼Îµ Î±Ï‚ Ï„Ï‰Î½, Î¼Î·Ï‡Î±Î½Î®Ï‚ ÎµÏ€Î¹Î´Î¹ÏŒÏ�Î¸Ï‰ÏƒÎ·Ï‚ ÎµÏ€Î¹Î´Î¹Î¿Ï�Î¸ÏŽÏƒÎµÎ¹Ï‚ ÏŽÏ‚ Î¼Î¹Î±. ÎšÎ»Ï€ Î±Ï‚"
+			}, 3, "Hey!", "ÎšÎ¬Î½Îµ Ï€Î¬Î½Ï„Î± Î³Î½Ï‰ÏÎ¯Î¶Î¿Ï…Î¼Îµ Î±Ï‚ Ï„Ï‰Î½, Î¼Î·Ï‡Î±Î½Î®Ï‚ ÎµÏ€Î¹Î´Î¹ÏŒÏÎ¸Ï‰ÏƒÎ·Ï‚ ÎµÏ€Î¹Î´Î¹Î¿ÏÎ¸ÏŽÏƒÎµÎ¹Ï‚ ÏŽÏ‚ Î¼Î¹Î±. ÎšÎ»Ï€ Î±Ï‚"
 		],
-		unicode: "è€� æ±‰è¯­ä¸­å­˜åœ¨ æ¸¯æ¾³å’Œæµ·å¤–çš„å�Žäººåœˆä¸­ è´µå·ž æˆ‘åŽ»äº†ä¹¦åº— çŽ°åœ¨å°šæœ‰äº‰",
+		unicode: "è€ æ±‰è¯ä¸å˜åœ¨ æ¸¯æ¾³å’Œæµ·å¤–çš„åŽäººåœˆä¸ è´µå·ž æˆ‘åŽ»äº†ä¹¦åº— çŽ°åœ¨å°šæœ‰äº‰",
 		b: "b",
 		c: fn1
 	};
@@ -877,9 +883,9 @@ test("Complex Objects.", function() {
 				prop: null,
 				foo: [1,2,null,{}, [], [1,2,3,4]], // different: 4 was add to the array
 				bar: undefined
-			}, 3, "Hey!", "ÎšÎ¬Î½Îµ Ï€Î¬Î½Ï„Î± Î³Î½Ï‰Ï�Î¯Î¶Î¿Ï…Î¼Îµ Î±Ï‚ Ï„Ï‰Î½, Î¼Î·Ï‡Î±Î½Î®Ï‚ ÎµÏ€Î¹Î´Î¹ÏŒÏ�Î¸Ï‰ÏƒÎ·Ï‚ ÎµÏ€Î¹Î´Î¹Î¿Ï�Î¸ÏŽÏƒÎµÎ¹Ï‚ ÏŽÏ‚ Î¼Î¹Î±. ÎšÎ»Ï€ Î±Ï‚"
+			}, 3, "Hey!", "ÎšÎ¬Î½Îµ Ï€Î¬Î½Ï„Î± Î³Î½Ï‰ÏÎ¯Î¶Î¿Ï…Î¼Îµ Î±Ï‚ Ï„Ï‰Î½, Î¼Î·Ï‡Î±Î½Î®Ï‚ ÎµÏ€Î¹Î´Î¹ÏŒÏÎ¸Ï‰ÏƒÎ·Ï‚ ÎµÏ€Î¹Î´Î¹Î¿ÏÎ¸ÏŽÏƒÎµÎ¹Ï‚ ÏŽÏ‚ Î¼Î¹Î±. ÎšÎ»Ï€ Î±Ï‚"
 		],
-		unicode: "è€� æ±‰è¯­ä¸­å­˜åœ¨ æ¸¯æ¾³å’Œæµ·å¤–çš„å�Žäººåœˆä¸­ è´µå·ž æˆ‘åŽ»äº†ä¹¦åº— çŽ°åœ¨å°šæœ‰äº‰",
+		unicode: "è€ æ±‰è¯ä¸å˜åœ¨ æ¸¯æ¾³å’Œæµ·å¤–çš„åŽäººåœˆä¸ è´µå·ž æˆ‘åŽ»äº†ä¹¦åº— çŽ°åœ¨å°šæœ‰äº‰",
 		b: "b",
 		c: fn1
 	};
@@ -891,9 +897,9 @@ test("Complex Objects.", function() {
 				foo: [1,2,null,{}, [], [1,2,3]],
 				newprop: undefined, // different: newprop was added
 				bar: undefined
-			}, 3, "Hey!", "ÎšÎ¬Î½Îµ Ï€Î¬Î½Ï„Î± Î³Î½Ï‰Ï�Î¯Î¶Î¿Ï…Î¼Îµ Î±Ï‚ Ï„Ï‰Î½, Î¼Î·Ï‡Î±Î½Î®Ï‚ ÎµÏ€Î¹Î´Î¹ÏŒÏ�Î¸Ï‰ÏƒÎ·Ï‚ ÎµÏ€Î¹Î´Î¹Î¿Ï�Î¸ÏŽÏƒÎµÎ¹Ï‚ ÏŽÏ‚ Î¼Î¹Î±. ÎšÎ»Ï€ Î±Ï‚"
+			}, 3, "Hey!", "ÎšÎ¬Î½Îµ Ï€Î¬Î½Ï„Î± Î³Î½Ï‰ÏÎ¯Î¶Î¿Ï…Î¼Îµ Î±Ï‚ Ï„Ï‰Î½, Î¼Î·Ï‡Î±Î½Î®Ï‚ ÎµÏ€Î¹Î´Î¹ÏŒÏÎ¸Ï‰ÏƒÎ·Ï‚ ÎµÏ€Î¹Î´Î¹Î¿ÏÎ¸ÏŽÏƒÎµÎ¹Ï‚ ÏŽÏ‚ Î¼Î¹Î±. ÎšÎ»Ï€ Î±Ï‚"
 		],
-		unicode: "è€� æ±‰è¯­ä¸­å­˜åœ¨ æ¸¯æ¾³å’Œæµ·å¤–çš„å�Žäººåœˆä¸­ è´µå·ž æˆ‘åŽ»äº†ä¹¦åº— çŽ°åœ¨å°šæœ‰äº‰",
+		unicode: "è€ æ±‰è¯ä¸å˜åœ¨ æ¸¯æ¾³å’Œæµ·å¤–çš„åŽäººåœˆä¸ è´µå·ž æˆ‘åŽ»äº†ä¹¦åº— çŽ°åœ¨å°šæœ‰äº‰",
 		b: "b",
 		c: fn1
 	};
@@ -904,9 +910,9 @@ test("Complex Objects.", function() {
 				prop: null,
 				foo: [1,2,null,{}, [], [1,2,3]],
 				bar: undefined
-			}, 3, "Hey!", "ÎšÎ¬Î½Îµ Ï€Î¬Î½Ï„Î± Î³Î½Ï‰Ï�Î¯Î¶Î¿Ï…Î¼Îµ Î±Ï‚ Ï„Ï‰Î½, Î¼Î·Ï‡Î±Î½Î®Ï‚ ÎµÏ€Î¹Î´Î¹ÏŒÏ�Î¸Ï‰ÏƒÎ·Ï‚ ÎµÏ€Î¹Î´Î¹Î¿Ï�Î¸ÏŽÏƒÎµÎ¹Ï‚ ÏŽÏ‚ Î¼Î¹Î±. ÎšÎ»Ï€ Î±" // different: missing last char
+			}, 3, "Hey!", "ÎšÎ¬Î½Îµ Ï€Î¬Î½Ï„Î± Î³Î½Ï‰ÏÎ¯Î¶Î¿Ï…Î¼Îµ Î±Ï‚ Ï„Ï‰Î½, Î¼Î·Ï‡Î±Î½Î®Ï‚ ÎµÏ€Î¹Î´Î¹ÏŒÏÎ¸Ï‰ÏƒÎ·Ï‚ ÎµÏ€Î¹Î´Î¹Î¿ÏÎ¸ÏŽÏƒÎµÎ¹Ï‚ ÏŽÏ‚ Î¼Î¹Î±. ÎšÎ»Ï€ Î±" // different: missing last char
 		],
-		unicode: "è€� æ±‰è¯­ä¸­å­˜åœ¨ æ¸¯æ¾³å’Œæµ·å¤–çš„å�Žäººåœˆä¸­ è´µå·ž æˆ‘åŽ»äº†ä¹¦åº— çŽ°åœ¨å°šæœ‰äº‰",
+		unicode: "è€ æ±‰è¯ä¸å˜åœ¨ æ¸¯æ¾³å’Œæµ·å¤–çš„åŽäººåœˆä¸ è´µå·ž æˆ‘åŽ»äº†ä¹¦åº— çŽ°åœ¨å°šæœ‰äº‰",
 		b: "b",
 		c: fn1
 	};
@@ -917,9 +923,9 @@ test("Complex Objects.", function() {
 				prop: null,
 				foo: [1,2,undefined,{}, [], [1,2,3]], // different: undefined instead of null
 				bar: undefined
-			}, 3, "Hey!", "ÎšÎ¬Î½Îµ Ï€Î¬Î½Ï„Î± Î³Î½Ï‰Ï�Î¯Î¶Î¿Ï…Î¼Îµ Î±Ï‚ Ï„Ï‰Î½, Î¼Î·Ï‡Î±Î½Î®Ï‚ ÎµÏ€Î¹Î´Î¹ÏŒÏ�Î¸Ï‰ÏƒÎ·Ï‚ ÎµÏ€Î¹Î´Î¹Î¿Ï�Î¸ÏŽÏƒÎµÎ¹Ï‚ ÏŽÏ‚ Î¼Î¹Î±. ÎšÎ»Ï€ Î±Ï‚"
+			}, 3, "Hey!", "ÎšÎ¬Î½Îµ Ï€Î¬Î½Ï„Î± Î³Î½Ï‰ÏÎ¯Î¶Î¿Ï…Î¼Îµ Î±Ï‚ Ï„Ï‰Î½, Î¼Î·Ï‡Î±Î½Î®Ï‚ ÎµÏ€Î¹Î´Î¹ÏŒÏÎ¸Ï‰ÏƒÎ·Ï‚ ÎµÏ€Î¹Î´Î¹Î¿ÏÎ¸ÏŽÏƒÎµÎ¹Ï‚ ÏŽÏ‚ Î¼Î¹Î±. ÎšÎ»Ï€ Î±Ï‚"
 		],
-		unicode: "è€� æ±‰è¯­ä¸­å­˜åœ¨ æ¸¯æ¾³å’Œæµ·å¤–çš„å�Žäººåœˆä¸­ è´µå·ž æˆ‘åŽ»äº†ä¹¦åº— çŽ°åœ¨å°šæœ‰äº‰",
+		unicode: "è€ æ±‰è¯ä¸å˜åœ¨ æ¸¯æ¾³å’Œæµ·å¤–çš„åŽäººåœˆä¸ è´µå·ž æˆ‘åŽ»äº†ä¹¦åº— çŽ°åœ¨å°šæœ‰äº‰",
 		b: "b",
 		c: fn1
 	};
@@ -930,11 +936,24 @@ test("Complex Objects.", function() {
 				prop: null,
 				foo: [1,2,null,{}, [], [1,2,3]],
 				bat: undefined // different: property name not "bar"
-			}, 3, "Hey!", "ÎšÎ¬Î½Îµ Ï€Î¬Î½Ï„Î± Î³Î½Ï‰Ï�Î¯Î¶Î¿Ï…Î¼Îµ Î±Ï‚ Ï„Ï‰Î½, Î¼Î·Ï‡Î±Î½Î®Ï‚ ÎµÏ€Î¹Î´Î¹ÏŒÏ�Î¸Ï‰ÏƒÎ·Ï‚ ÎµÏ€Î¹Î´Î¹Î¿Ï�Î¸ÏŽÏƒÎµÎ¹Ï‚ ÏŽÏ‚ Î¼Î¹Î±. ÎšÎ»Ï€ Î±Ï‚"
+			}, 3, "Hey!", "ÎšÎ¬Î½Îµ Ï€Î¬Î½Ï„Î± Î³Î½Ï‰ÏÎ¯Î¶Î¿Ï…Î¼Îµ Î±Ï‚ Ï„Ï‰Î½, Î¼Î·Ï‡Î±Î½Î®Ï‚ ÎµÏ€Î¹Î´Î¹ÏŒÏÎ¸Ï‰ÏƒÎ·Ï‚ ÎµÏ€Î¹Î´Î¹Î¿ÏÎ¸ÏŽÏƒÎµÎ¹Ï‚ ÏŽÏ‚ Î¼Î¹Î±. ÎšÎ»Ï€ Î±Ï‚"
 		],
-		unicode: "è€� æ±‰è¯­ä¸­å­˜åœ¨ æ¸¯æ¾³å’Œæµ·å¤–çš„å�Žäººåœˆä¸­ è´µå·ž æˆ‘åŽ»äº†ä¹¦åº— çŽ°åœ¨å°šæœ‰äº‰",
+		unicode: "è€ æ±‰è¯ä¸å˜åœ¨ æ¸¯æ¾³å’Œæµ·å¤–çš„åŽäººåœˆä¸ è´µå·ž æˆ‘åŽ»äº†ä¹¦åº— çŽ°åœ¨å°šæœ‰äº‰",
 		b: "b",
 		c: fn1
+	};
+
+	var diff6 = {
+		a: [
+			"string", null, 0, "1", 1, {
+				prop: null,
+				foo: [1,2,null,{}, [], [1,2,3]],
+				bar: undefined
+			}, 3, "Hey!", "ÎšÎ¬Î½Îµ Ï€Î¬Î½Ï„Î± Î³Î½Ï‰ÏÎ¯Î¶Î¿Ï…Î¼Îµ Î±Ï‚ Ï„Ï‰Î½, Î¼Î·Ï‡Î±Î½Î®Ï‚ ÎµÏ€Î¹Î´Î¹ÏŒÏÎ¸Ï‰ÏƒÎ·Ï‚ ÎµÏ€Î¹Î´Î¹Î¿ÏÎ¸ÏŽÏƒÎµÎ¹Ï‚ ÏŽÏ‚ Î¼Î¹Î±. ÎšÎ»Ï€ Î±Ï‚"
+		],
+		unicode: "è€ æ±‰è¯ä¸å˜åœ¨ æ¸¯æ¾³å’Œæµ·å¤–çš„åŽäººåœˆä¸ è´µå·ž æˆ‘åŽ»äº†ä¹¦åº— çŽ°åœ¨å°šæœ‰äº‰",
+		b: "b",
+		c: fn2 // different: fn2 instead of fn1
 	};
 
 	equal(QUnit.equiv(same1, same2), true);
@@ -948,6 +967,7 @@ test("Complex Objects.", function() {
 	equal(QUnit.equiv(same1, diff3), false);
 	equal(QUnit.equiv(same1, diff4), false);
 	equal(QUnit.equiv(same1, diff5), false);
+	equal(QUnit.equiv(same1, diff6), false);
 	equal(QUnit.equiv(diff5, diff1), false);
 });
 
@@ -1209,7 +1229,7 @@ test("Instances", function() {
 		var privateVar = 0;
 		this.year = year;
 		this.isOld = function() {
-			return year > 10;
+			return privateVar > 10;
 		};
 	}
 
@@ -1217,7 +1237,7 @@ test("Instances", function() {
 		var privateVar = 1;
 		this.year = year;
 		this.isOld = function() {
-			return year > 80;
+			return privateVar > 80;
 		};
 	}
 
@@ -1226,14 +1246,13 @@ test("Instances", function() {
 	var carDiff = new Car(10);
 	var human = new Human(30);
 
-	var diff = {
-		year: 30
-	};
-
-	var same = {
-		year: 30,
-		isOld: function () {}
-	};
+	/**
+	 * difference:
+	 *   - year: 30
+	 * same:
+	 *   - year: 30,
+	 *   - isOld: function () {}
+	 */
 
 	equal(QUnit.equiv(car, car), true);
 	equal(QUnit.equiv(car, carDiff), false);
@@ -1295,7 +1314,7 @@ test("Complex Instances Nesting (with function value in literals and/or in neste
 			b: fnOutside, // ok make reference to a function in all instances scope
 
 			// This function won't be ingored.
-			// It isn't visible for all C insances
+			// It isn't visible for all C instances
 			// and it is not in a property of an instance. (in an Object instances e.g. the object literal)
 			c: fnInside
 		};
@@ -1363,7 +1382,7 @@ test("Complex Instances Nesting (with function value in literals and/or in neste
 });
 
 
-test('object with references to self wont loop', function(){
+test('object with references to self wont loop', function() {
 	var circularA = {
 		abc:null
 	}, circularB = {
@@ -1371,34 +1390,34 @@ test('object with references to self wont loop', function(){
 	};
 	circularA.abc = circularA;
 	circularB.abc = circularB;
-	equal(QUnit.equiv(circularA, circularB), true, "Should not repeat test on object (ambigous test)");
+	equal(QUnit.equiv(circularA, circularB), true, "Should not repeat test on object (ambiguous test)");
 
 	circularA.def = 1;
 	circularB.def = 1;
-	equal(QUnit.equiv(circularA, circularB), true, "Should not repeat test on object (ambigous test)");
+	equal(QUnit.equiv(circularA, circularB), true, "Should not repeat test on object (ambiguous test)");
 
 	circularA.def = 1;
 	circularB.def = 0;
-	equal(QUnit.equiv(circularA, circularB), false, "Should not repeat test on object (unambigous test)");
+	equal(QUnit.equiv(circularA, circularB), false, "Should not repeat test on object (unambiguous test)");
 });
 
-test('array with references to self wont loop', function(){
+test('array with references to self wont loop', function() {
 	var circularA = [],
 		circularB = [];
 	circularA.push(circularA);
 	circularB.push(circularB);
-	equal(QUnit.equiv(circularA, circularB), true, "Should not repeat test on array (ambigous test)");
+	equal(QUnit.equiv(circularA, circularB), true, "Should not repeat test on array (ambiguous test)");
 
 	circularA.push( 'abc' );
 	circularB.push( 'abc' );
-	equal(QUnit.equiv(circularA, circularB), true, "Should not repeat test on array (ambigous test)");
+	equal(QUnit.equiv(circularA, circularB), true, "Should not repeat test on array (ambiguous test)");
 
 	circularA.push( 'hello' );
 	circularB.push( 'goodbye' );
-	equal(QUnit.equiv(circularA, circularB), false, "Should not repeat test on array (unambigous test)");
+	equal(QUnit.equiv(circularA, circularB), false, "Should not repeat test on array (unambiguous test)");
 });
 
-test('mixed object/array with references to self wont loop', function(){
+test('mixed object/array with references to self wont loop', function() {
 	var circularA = [{abc:null}],
 		circularB = [{abc:null}];
 	circularA[0].abc = circularA;
@@ -1406,15 +1425,41 @@ test('mixed object/array with references to self wont loop', function(){
 
 	circularA.push(circularA);
 	circularB.push(circularB);
-	equal(QUnit.equiv(circularA, circularB), true, "Should not repeat test on object/array (ambigous test)");
+	equal(QUnit.equiv(circularA, circularB), true, "Should not repeat test on object/array (ambiguous test)");
 
 	circularA[0].def = 1;
 	circularB[0].def = 1;
-	equal(QUnit.equiv(circularA, circularB), true, "Should not repeat test on object/array (ambigous test)");
+	equal(QUnit.equiv(circularA, circularB), true, "Should not repeat test on object/array (ambiguous test)");
 
 	circularA[0].def = 1;
 	circularB[0].def = 0;
-	equal(QUnit.equiv(circularA, circularB), false, "Should not repeat test on object/array (unambigous test)");
+	equal(QUnit.equiv(circularA, circularB), false, "Should not repeat test on object/array (unambiguous test)");
+});
+
+test('compare self-referent to tree', function () {
+	var temp,
+		circularA = [0],
+		treeA = [0, null],
+		circularO = {},
+		treeO = {
+			o: null
+		};
+
+	circularA[1] = circularA;
+	circularO.o = circularO;
+
+	equal(QUnit.equiv(circularA, treeA), false, "Array: Should not consider circular equal to tree");
+	equal(QUnit.equiv(circularO, treeO), false, "Object: Should not consider circular equal to tree");
+
+	temp = [ 0, circularA ];
+	equal(QUnit.equiv(circularA, temp), true, "Array: Reference is circular for one, but equal on other");
+	equal(QUnit.equiv(temp, circularA), true, "Array: Reference is circular for one, but equal on other");
+
+	temp = {
+		o: circularO
+	};
+	equal(QUnit.equiv(circularO, temp), true, "Object: Reference is circular for one, but equal on other");
+	equal(QUnit.equiv(temp, circularO), true, "Object: Reference is circular for one, but equal on other");
 });
 
 test("Test that must be done at the end because they extend some primitive's prototype", function() {

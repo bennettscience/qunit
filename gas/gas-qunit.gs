@@ -3,7 +3,7 @@
  *
  * Read the <a href="https://github.com/simula-innovation/qunit/tree/gas/gas">README</a> for more information.
  *
- * Based on a fork of QUnit v1.11.0pre - A JavaScript Unit Testing Framework (http://qunitjs.com)
+ * Based on a fork of QUnit v1.12.0pre - A JavaScript Unit Testing Framework (http://qunitjs.com)
  * Adaptation for Google Apps Script made by Simula Innovation and released under the MIT license.
  */
 
@@ -381,7 +381,8 @@ function helpers( obj ) {
  * init, reset, registerLoggingCallback, push, pushFailure,
  * extend, is, objectType, url, id, addEvent, triggerEvent,
  * assert, ok, equal, notEqual, deepEqual, notDeepEqual, strictEqual,
- * notStrictEqual, throws, raises, equals, same, equiv, jsDump, diff,
+ * notStrictEqual, propEqual notPropEqual,
+ * throws, raises, equals, same, equiv, jsDump, diff,
  * htmlCollection, internals.
  * </p>
  * @param {Object} obj [Optional] The object to extend with QUnit

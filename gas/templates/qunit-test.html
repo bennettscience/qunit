@@ -4,13 +4,18 @@
   </strong>
   <b class="counts">(<b class="failed"><?= assertionsFailed ?></b>, <b class="passed"><?= assertionsPassed ?></b>, <?= assertionsTotal ?>)</b>
   <a href="<?= testUrl ?>">Rerun</a>
-  <ol id="qunit-test-block<?= testNumber ?>" style="display: <?= testDisplay ?>;">
+  <span class="runtime"><?= runTime ?> ms</span>
+  <ol id="qunit-test-block<?= testNumber ?>" class="qunit-assert-list <?= collapsed ?>">
     <?!= assertions ?>
   </ol>
   <script type="text/javascript">
     addEvent( id( "qunit-test-banner<?= testNumber ?>" ), "click", function() {
       var block = id( "qunit-test-block<?= testNumber ?>" );
-      block.style.display = ( block.style.display === "none" ) ? "block" : "none";
+      if (hasClass( block, "qunit-collapsed" )) {
+        removeClass( block, "qunit-collapsed" );
+      } else {
+        addClass( block, "qunit-collapsed" );
+      }
     });
   </script>
 </li>

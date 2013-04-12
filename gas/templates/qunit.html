@@ -4,16 +4,45 @@
   <script type="text/javascript">
     window["id"] = function( name ) {
       return !!( typeof document !== "undefined" && document && document.getElementById ) && document.getElementById( name );
-    };
+    }
+
     window["addEvent"] = function( elem, type, fn ) {
+      // Standards-based browsers
       if ( elem.addEventListener ) {
         elem.addEventListener( type, fn, false );
-      } else if ( elem.attachEvent ) {
-        elem.attachEvent( "on" + type, fn );
+        // IE
       } else {
-        fn();
+        elem.attachEvent( "on" + type, fn );
       }
-    };
+    }
+
+    window["addEvents"] = function( elems, type, fn ) {
+      var i = elems.length;
+      while ( i-- ) {
+        addEvent( elems[i], type, fn );
+      }
+    }
+
+    window["hasClass"] = function( elem, name ) {
+      return (" " + elem.className + " ").indexOf(" " + name + " ") > -1;
+    }
+
+    window["addClass"] = function( elem, name ) {
+      if ( !hasClass( elem, name ) ) {
+        elem.className += (elem.className ? " " : "") + name;
+      }
+    }
+
+    window["removeClass"] = function( elem, name ) {
+      var set = " " + elem.className + " ";
+      // Class name may appear multiple times
+      while ( set.indexOf(" " + name + " ") > -1 ) {
+        set = set.replace(" " + name + " " , " ");
+      }
+      // If possible, trim it for prettiness, but not necessarily
+      elem.className = window.jQuery ? jQuery.trim( set ) : ( set.trim ? set.trim() : set );
+    }
+
     addEvent( window, "load", function() {
       if ( <?!= hidepassed ?> ) {
         var ol = id( "qunit-tests" );

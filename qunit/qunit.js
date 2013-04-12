@@ -253,7 +253,7 @@ Test.prototype = {
 		}
 
 		var i, assertion, a, b, time, li, ol,
-      assertionTemplate, assertionsHtml,
+			assertionTemplate, assertionsHtml,
 			test = this,
 			good = 0,
 			bad = 0,
@@ -351,7 +351,7 @@ Test.prototype = {
 				}
 			}
 
-      this.testTemplate.runTime = this.runtime;
+			this.testTemplate.runTime = this.runtime;
 			this.testTemplate.collapsed = bad === 0 ? "qunit-collapsed" : "";
 			this.testTemplate.assertionsFailed = bad;
 			this.testTemplate.assertionsPassed = good;
@@ -1123,7 +1123,7 @@ QUnit.load = function() {
 	// Initialize the config, saving the execution queue
 	var banner, filter, i, label, len, main, ol, toolbar, userAgent, val,
 		urlConfigCheckboxesContainer, urlConfigCheckboxes, moduleFilter,
-    mainTemplate, linkTemplate, toolbarTemplate,
+		mainTemplate, linkTemplate, toolbarTemplate,
 		numModules = 0,
 		moduleNames = [],
 		moduleFilterHtml = "",

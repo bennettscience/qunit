@@ -33,10 +33,10 @@
  */
 function config( cfg ) {
   if ( typeof cfg === "undefined" ) {
-    return QUnit_.config;
+    return QUnitObj.config;
   } else {
-    QUnit_.extend( QUnit_.config, cfg );
-    return QUnit_.config;
+    QUnitObj.extend( QUnitObj.config, cfg );
+    return QUnitObj.config;
   }
 }
 
@@ -49,15 +49,15 @@ function config( cfg ) {
  */
 function load( tests ) {
   if ( typeof tests === "function" ) {
-    if ( QUnit_.config.autorun ) {
-      QUnit_.load();
+    if ( QUnitObj.config.autorun ) {
+      QUnitObj.load();
       tests();
     } else {
       tests();
-      QUnit_.load();
+      QUnitObj.load();
     }
   } else {
-    QUnit_.load();
+    QUnitObj.load();
   }
 }
 
@@ -79,23 +79,23 @@ function load( tests ) {
  */
 function urlParams( params ) {
   if ( typeof params == "undefined" ) {
-    return QUnit_.urlParams;
+    return QUnitObj.urlParams;
   } else {
     var p, decodedParams = {};
 
     for ( p in params ) {
       decodedParams[p] = decodeURIComponent(params[p]);
     }
-    QUnit_.urlParams = QUnit_.extend( {}, decodedParams );
+    QUnitObj.urlParams = QUnitObj.extend( {}, decodedParams );
 
     // String search anywhere in moduleName+testName
-    QUnit_.config.filter = QUnit_.urlParams.filter;
+    QUnitObj.config.filter = QUnitObj.urlParams.filter;
 
     // Exact match of the module name
-    QUnit_.config.module = QUnit_.urlParams.modulefilter;
+    QUnitObj.config.module = QUnitObj.urlParams.modulefilter;
 
-    QUnit_.config.testNumber = parseInt( QUnit_.urlParams.testNumber, 10 ) || null;
-    return QUnit_.urlParams;
+    QUnitObj.config.testNumber = parseInt( QUnitObj.urlParams.testNumber, 10 ) || null;
+    return QUnitObj.urlParams;
   }
 }
 
@@ -115,8 +115,8 @@ function urlParams( params ) {
  */
 function getHtml() {
   var i,
-    config = QUnit_.config,
-    htmlCollection = QUnit_.htmlCollection,
+    config = QUnitObj.config,
+    htmlCollection = QUnitObj.htmlCollection,
     testHtml = HtmlService.createHtmlOutput();
 
   if ( config.altertitle ) {
@@ -155,7 +155,7 @@ function getHtml() {
  *        module() again with callbacks resets them.
  */
 function module( name, testEnvironment ) {
-  QUnit_.module( name, testEnvironment );
+  QUnitObj.module( name, testEnvironment );
 }
 
 /**
@@ -188,7 +188,7 @@ function test( title, expected, callback ) {
     callback = expected;
     expected = null;
   }
-  QUnit_.test( title, expected, callback );
+  QUnitObj.test( title, expected, callback );
 }
 
 /**
@@ -210,7 +210,7 @@ function asyncTest( title, expected, callback ) {
     callback = expected;
     expected = null;
   }
-  QUnit_.asyncTest( title, expected, callback );
+  QUnitObj.asyncTest( title, expected, callback );
 }
 
 /**
@@ -225,9 +225,9 @@ function asyncTest( title, expected, callback ) {
  */
 function expect( amount ) {
   if ( arguments.length === 1 ) {
-    QUnit_.expect( amount );
+    QUnitObj.expect( amount );
   } else {
-    return QUnit_.expect();
+    return QUnitObj.expect();
   }
 }
 
@@ -243,7 +243,7 @@ function expect( amount ) {
  *        default.
  */
 function start( decrement ) {
-  QUnit_.start( decrement );
+  QUnitObj.start( decrement );
 }
 
 /**
@@ -259,7 +259,7 @@ function start( decrement ) {
  *        corresponding start() calls.
  */
 function stop( increment ) {
-  QUnit_.stop( increment );
+  QUnitObj.stop( increment );
 }
 
 /**
@@ -269,7 +269,7 @@ function stop( increment ) {
  * @param {Function} callback The callback function.
  */
 function begin( callback ) {
-  QUnit_.registerLoggingCallback( "begin" )( callback );
+  QUnitObj.registerLoggingCallback( "begin" )( callback );
 }
 
 /**
@@ -285,7 +285,7 @@ function begin( callback ) {
  * @param {Function} callback The callback function.
  */
 function done( callback ) {
-  QUnit_.registerLoggingCallback( "done" )( callback );
+  QUnitObj.registerLoggingCallback( "done" )( callback );
 }
 
 /**
@@ -298,7 +298,7 @@ function done( callback ) {
  * @param {Function} callback The callback function.
  */
 function log( callback ) {
-  QUnit_.registerLoggingCallback( "log" )( callback );
+  QUnitObj.registerLoggingCallback( "log" )( callback );
 }
 
 /**
@@ -310,7 +310,7 @@ function log( callback ) {
  * @param {Function} callback The callback function.
  */
 function moduleStart( callback ) {
-  QUnit_.registerLoggingCallback( "moduleStart" )( callback );
+  QUnitObj.registerLoggingCallback( "moduleStart" )( callback );
 }
 
 /**
@@ -322,7 +322,7 @@ function moduleStart( callback ) {
  * @param {Function} callback The callback function.
  */
 function moduleDone( callback ) {
-  QUnit_.registerLoggingCallback( "moduleDone" )( callback );
+  QUnitObj.registerLoggingCallback( "moduleDone" )( callback );
 }
 
 /**
@@ -334,7 +334,7 @@ function moduleDone( callback ) {
  * @param {Function} callback The callback function.
  */
 function testStart( callback ) {
-  QUnit_.registerLoggingCallback( "testStart" )( callback );
+  QUnitObj.registerLoggingCallback( "testStart" )( callback );
 }
 
 /**
@@ -346,7 +346,7 @@ function testStart( callback ) {
  * @param {Function} callback The callback function.
  */
 function testDone( callback ) {
-  QUnit_.registerLoggingCallback( "testDone" )( callback );
+  QUnitObj.registerLoggingCallback( "testDone" )( callback );
 }
 
 /**
@@ -363,12 +363,12 @@ function testDone( callback ) {
  * @return {Object} The extended object.
  */
 function helpers( obj ) {
-  return QUnit_.extend( QUnit_.extend( obj, QUnit_.assert ), {
-    module: QUnit_.module,
-    test: QUnit_.test,
-    asyncTest: QUnit_.asyncTest,
-    expect: QUnit_.expect,
-    raises: QUnit_.raises
+  return QUnitObj.extend( QUnitObj.extend( obj, QUnitObj.assert ), {
+    module: QUnitObj.module,
+    test: QUnitObj.test,
+    asyncTest: QUnitObj.asyncTest,
+    expect: QUnitObj.expect,
+    raises: QUnitObj.raises
   });
 }
 
@@ -393,11 +393,11 @@ function helpers( obj ) {
  */
 function exposeInternals( obj ) {
   if ( typeof obj == "undefined" ) {
-    QUnit_.extend( this, QUnit_.internals );
+    QUnitObj.extend( this, QUnitObj.internals );
   } else {
-    QUnit_.extend( obj, QUnit_.internals );
+    QUnitObj.extend( obj, QUnitObj.internals );
   }
-  return QUnit_.internals;
+  return QUnitObj.internals;
 }
 
 /**
@@ -407,5 +407,5 @@ function exposeInternals( obj ) {
  * @return {Object} The QUnit object.
  */
 function getObj() {
-  return QUnit_;
+  return QUnitObj;
 }

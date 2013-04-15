@@ -22,7 +22,7 @@ var QUnit,
 	htmlCollection,
 	prop,
 	defined = {
-	  htmlService: typeof HtmlService !== "undefined", // a templating service in Google Apps Script
+		htmlService: typeof HtmlService !== "undefined", // a templating service in Google Apps Script
 		setTimeout: typeof window.setTimeout !== "undefined",
 		sessionStorage: (function() {
 			var x = "qunit-test-string";
@@ -796,8 +796,8 @@ if ( defined.htmlService ) {
 	// Initialize QUnit.urlParams
 	QUnit.urlParams = {};
 
-	// In Google Apps Script, expose QUnit object as QUnit_, because the library will have the name QUnit
-	window.QUnit_ = QUnit;
+	// In Google Apps Script, expose QUnit object as QUnitObj, because the library will have the name QUnit
+	window.QUnitObj = QUnit;
 
 	// Initialize container for HTML templates and documents
 	htmlCollection = {
@@ -1678,7 +1678,7 @@ function registerLoggingCallback( key ) {
 }
 
 if ( defined.htmlService ) {
-	QUnit_.registerLoggingCallback = registerLoggingCallback;
+	QUnitObj.registerLoggingCallback = registerLoggingCallback;
 }
 
 // Supports deprecated method of completely overwriting logging callbacks

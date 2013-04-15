@@ -2,7 +2,7 @@
 	"predef": [
 		"jQuery",
 		"exports",
-		"QUnit",
+		"QUnitObj",
 		"HtmlService",
 		"ScriptApp"
 	],

@@ -24,17 +24,7 @@ grunt.initConfig({
 				jshintrc: ".jshintrc"
 		},
 		gruntfile: [ "Gruntfile.js" ],
-		qunit: {
-			globals: {
-				jQuery: true,
-				QUnit_: true,
-				HtmlService: true,
-				ScriptApp: true
-			},
-			files: {
-				src: [ "qunit/**/*.js" ]
-			}
-		},
+		qunit: [ "qunit/**/*.js" ],
 		addons: {
 			options: {
 				jshintrc: "addons/.jshintrc"

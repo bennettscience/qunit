@@ -1,7 +1,10 @@
 {
 	"predef": [
 		"jQuery",
-		"exports"
+		"exports",
+		"QUnit",
+		"HtmlService",
+		"ScriptApp"
 	],
 
 	"bitwise": true,

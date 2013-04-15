@@ -370,21 +370,24 @@ test("testEnvironment reset for next test",function() {
 	deepEqual(this.options, {recipe:"soup",ingredients:["hamster","onions","carrots"]}, "Is this a bug or a feature? Could do a deep copy") ;
 });
 
-if (typeof QUnit.config !== "function") {
-
 module("testEnvironment tests");
 
+function getconfig() {
+	// In Google Apps Script, config is exposed as a library function
+	return (typeof QUnit.config === "function") ? QUnit.config().current.testEnvironment : QUnit.config.current.testEnvironment;
+}
+
 function makeurl() {
-	var testEnv = QUnit.config.current.testEnvironment;
+	var testEnv = getconfig();
 	var url = testEnv.url || 'http://example.com/search';
 	var q   = testEnv.q   || 'a search test';
 	return url + '?q='+encodeURIComponent(q);
 }
 
 test("makeurl working", 3, function() {
-	equal(QUnit.config.current.testEnvironment, this, 'The current testEnvironment QUnit.config');
+	equal( getconfig(), this, 'The current testEnvironment QUnit.config');
 	/*jshint camelcase:false */
-	equal( QUnit.current_testEnvironment, this, 'The current testEnvironment is in QUnit.config (old way)');
+	equal( QUnit.current_testEnvironment || QUnit.getObj().current_testEnvironment, this, 'The current testEnvironment is in QUnit.config (old way)');
 	/*jshint camelcase:true */
 	equal( makeurl(), 'http://example.com/search?q=a%20search%20test', 'makeurl returns a default url if nothing specified in the testEnvironment');
 });
@@ -396,8 +399,6 @@ module("testEnvironment with makeurl settings", {
 test("makeurl working with settings from testEnvironment", function() {
 	equal( makeurl(), 'http://google.com/?q=another_search_test', 'rather than passing arguments, we use test metadata to from the url');
 });
-
-}
 
 module("jsDump");
 test("jsDump output", function() {

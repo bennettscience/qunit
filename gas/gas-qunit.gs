@@ -138,7 +138,6 @@ function getHtml() {
     testHtml.append( htmlCollection.testResults[i] );
   }
   htmlCollection.main.tests = testHtml.getContent();
-  return htmlCollection.main.evaluate().setTitle( htmlCollection.main.title );
   return htmlCollection.main.evaluate().setSandboxMode(HtmlService.SandboxMode.IFRAME).setTitle( htmlCollection.main.title );
 }
 
